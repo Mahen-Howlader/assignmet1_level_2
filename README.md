@@ -1,5 +1,5 @@
 
-## 1) TypeScript-এ interface এবং type এর মধ্যে পার্থক্য কী?
+# 1) TypeScript-এ interface এবং type এর মধ্যে পার্থক্য কী?
 TypeScript-এ `interface` এবং `type` উভয়ই অবজেক্টের টাইপ নির্ধারণ করতে ব্যবহৃত হয়, তবে তাদের মধ্যে কিছু মূল পার্থক্য রয়েছে। 
 ### ১. **সিনট্যাক্স এবং ব্যবহার**
 - **`interface`**:
@@ -119,3 +119,59 @@ type UserType = {
 } & { email: string };
 const userType: UserType = { id: "1", name: "Alice", email: "alice@example.com" };
 ```
+
+
+
+
+# 2) What is the use of the keyof keyword in TypeScript? Provide an example.
+
+TypeScript-এ keyof কীওয়ার্ড একটি অবজেক্টের সব প্রপার্টি নাম (কী) গুলোর একটি লিস্ট তৈরি করে, যেটা ইউনিয়ন টাইপ হিসেবে ব্যবহার করা যায়। এটি নিশ্চিত করে যে আপনি শুধু সেই অবজেক্টের বৈধ কী ব্যবহার করছেন।
+
+সহজ উদাহরণ
+ধরি আমাদের একটা অবজেক্ট আছে:
+
+typescript
+
+Copy
+interface Person {
+    name: string;
+    age: number;
+}
+keyof Person দিলে এটি "name" | "age" টাইপ তৈরি করবে। অর্থাৎ, এটি Person এর সব কী (প্রপার্টি নাম) একসাথে দেয়।
+
+কীভাবে ব্যবহার করব?
+একটা ফাংশন যেটা Person থেকে কোনো প্রপার্টির মান নেয়:
+
+typescript
+
+Copy
+function getValue(obj: Person, key: keyof Person) {
+    return obj[key];
+}
+
+const person: Person = {
+    name: "Alice",
+    age: 30,
+};
+
+console.log(getValue(person, "name")); // আউটপুট: Alice
+console.log(getValue(person, "age")); // আউটপুট: 30
+// console.log(getValue(person, "email")); // ত্রুটি: "email" Person এর কী নয়
+এটা কেন দরকার?
+keyof নিশ্চিত করে যে আপনি শুধু Person এর বৈধ কী (name বা age) ব্যবহার করছেন।
+ভুল কী (যেমন "email") দিলে TypeScript ত্রুটি দেখাবে।
+আরেকটা উদাহরণ
+ধরি আমরা প্রপার্টির মান চেঞ্জ করতে চাই:
+
+typescript
+
+Copy
+function setValue(obj: Person, key: keyof Person, value: string | number) {
+    obj[key] = value;
+}
+
+setValue(person, "name", "Bob"); // কাজ করবে
+setValue(person, "age", 35); // কাজ করবে
+// setValue(person, "phone", "12345"); // ত্রুটি: "phone" Person এর কী নয়
+সংক্ষেপে
+keyof বলে: "এই অবজেক্টের যেসব কী আছে, শুধু সেগুলো ব্যবহার করতে পারবে।" এটি কোডকে নিরাপদ ও ভুল-মুক্ত রাখে।
